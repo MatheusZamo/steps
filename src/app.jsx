@@ -1,21 +1,5 @@
 import { useState } from "react"
 
-const steps = [
-  {
-    id: crypto.randomUUID(),
-    description: "Entender o problema do cliente",
-  },
-  {
-    id: crypto.randomUUID(),
-    description: "Desenvolver a solução do problema",
-  },
-  {
-    id: crypto.randomUUID(),
-    description:
-      "Repetir até o cliente ficar feliz e encher seu 🍑 de dinheiro",
-  },
-]
-
 const Toggle = ({ shouldBeOpen, onClickToggle }) => (
   <div className="container-toggle">
     <button className="toggle" onClick={onClickToggle}>
