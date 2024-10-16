@@ -20,7 +20,7 @@ const Steps = ({ shouldBeOpen, steps, step, onClickPrevious, onClickNext }) => {
           ))}
         </ul>
         <h2 className="message" key={steps.id}>
-          Passo {step}: {steps[step - 1].description}
+          Passo {step}: {steps[step - 1]?.description}
         </h2>
 
         <div className="buttons">
