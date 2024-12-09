@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useReducer } from "react"
 
 const Toggle = ({ shouldBeOpen, onClickToggle }) => (
   <div className="container-toggle">
@@ -8,38 +8,49 @@ const Toggle = ({ shouldBeOpen, onClickToggle }) => (
   </div>
 )
 
+const reducer = (state, action) =>
+  ({
+    set_steps: {
+      ...state,
+      steps: action.payload?.length > 0 ? action.payload : [],
+    },
+    increment_step: {
+      ...state,
+      step: state.step === state.steps.length ? state.step : state.step + 1,
+    },
+    decrement_step: {
+      ...state,
+      step: state.step - 1 === 0 ? state.step : state.step - 1,
+    },
+  })[action.type] || state
+
 const Steps = () => {
-  const [steps, setSteps] = useState([])
-  const [step, setStep] = useState(1)
+  const [state, dispatch] = useReducer(reducer, { step: 1, steps: [] })
 
   useEffect(() => {
     fetch(
       "https://raw.githubusercontent.com/MatheusZamo/steps/refs/heads/main/src/infos.json",
     )
       .then((response) => response.json())
-      .then((response) =>
-        setSteps(response.map((obj) => ({ ...obj, id: crypto.randomUUID() }))),
-      )
+      .then((data) => dispatch({ type: "set_steps", payload: data }))
       .catch(console.log)
   })
 
-  const handleClickNext = () =>
-    setStep((step) => (step === steps.length ? step : step + 1))
+  const handleClickNext = () => dispatch({ type: "increment_step" })
 
-  const handleClickPrevious = () =>
-    setStep((step) => (step - 1 === 0 ? step : step - 1))
+  const handleClickPrevious = () => dispatch({ type: "decrement_step" })
 
   return (
     <div className="steps">
       <ul className="numbers">
-        {steps.map((item, index) => (
-          <li className={index + 1 === step ? "active" : ""} key={item.id}>
+        {state.steps.map((item, index) => (
+          <li className={index + 1 === state.step ? "active" : ""} key={index}>
             {index + 1}
           </li>
         ))}
       </ul>
-      <h2 className="message" key={steps.id}>
-        Passo {step}: {steps[step - 1]?.description}
+      <h2 className="message" key={state.steps.id}>
+        Passo {state.step}: {state.steps[state.step - 1]?.description}
       </h2>
 
       <div className="buttons">
